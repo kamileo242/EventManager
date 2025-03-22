@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<AssemblyName>EventManager.Models</AssemblyName>
+		<RootNamespace>EventManager.Models</RootNamespace>
+		<Description>Modele dostępne w usłudze.</Description>
+	</PropertyGroup>
+
+</Project>

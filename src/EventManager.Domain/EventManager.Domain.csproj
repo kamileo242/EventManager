@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<AssemblyName>EventManager.Domain</AssemblyName>
+		<RootNamespace>EventManager.Domain</RootNamespace>
+		<Description>Warstwa logiki biznesowej. Projekt zawiera implementację serwisów.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\EventManager.DataLayer\EventManager.DataLayer.csproj" />
+	  <ProjectReference Include="..\EventManager.Models\EventManager.Models.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Contracts\" />
+	  <Folder Include="Services\" />
+	</ItemGroup>
+
+</Project>
