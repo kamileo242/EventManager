@@ -12,9 +12,4 @@
 	  <ProjectReference Include="..\EventManager.Models\EventManager.Models.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Contracts\" />
-	  <Folder Include="Services\" />
-	</ItemGroup>
-
 </Project>

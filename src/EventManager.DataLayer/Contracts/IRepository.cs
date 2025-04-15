@@ -12,6 +12,13 @@ namespace EventManager.Datalayer
   public interface IRepository<TModel> where TModel : class
   {
     /// <summary>
+    /// Pobiera obiekt na podstawie identyfikatora.
+    /// </summary>
+    /// <param name="id">Identyfikator obiektu.</param>
+    /// <returns>Znaleziona encja</returns>
+    Task<TModel> GetByIdAsync(Guid id);
+
+    /// <summary>
     /// Zwraca kolekcję wszystkich obiektów.
     /// </summary>
     /// <returns>Kolekcja wszystkich obiektów.</returns>

@@ -238,15 +238,6 @@ namespace RepositoryTests
     }
 
     [Test]
-    public async Task UpdateAsync_Should_throw_exception_when_address_is_null()
-    {
-      Func<Task> act = async () => await addressRepository.UpdateAsync(null);
-
-      await act.Should().ThrowAsync<ArgumentNullException>()
-          .WithMessage("Value cannot be null. (Parameter 'entity')");
-    }
-
-    [Test]
     public async Task UpdateAsync_Should_throw_exception_when_address_is_not_exists()
     {
       var addressId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -256,10 +247,12 @@ namespace RepositoryTests
         Street = "Taśmowa",
         HouseNumber = "8",
       };
-      Func<Task> act = async () => await addressRepository.UpdateAsync(updateAddress);
 
-      await act.Should().ThrowAsync<KeyNotFoundException>()
-          .WithMessage($"Nie znaleziono obiektu o Id: {addressId}.");
+      await addressRepository.UpdateAsync(updateAddress);
+
+      dbContext.ChangeTracker.Entries()
+               .All(e => e.State == EntityState.Unchanged)
+               .Should().BeTrue();
     }
 
     [Test]
@@ -281,6 +274,9 @@ namespace RepositoryTests
       var result = await dbContext.Addresses.FindAsync(addressId);
 
       result.Should().BeNull();
+      dbContext.ChangeTracker.Entries()
+         .All(e => e.State == EntityState.Deleted)
+         .Should().BeTrue();
     }
 
     [Test]
@@ -289,9 +285,10 @@ namespace RepositoryTests
       var addressId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
       await addressRepository.DeleteAsync(addressId);
-      var result = await dbContext.Addresses.FindAsync(addressId);
 
-      result.Should().BeNull();
+      dbContext.ChangeTracker.Entries()
+               .All(e => e.State == EntityState.Unchanged)
+               .Should().BeTrue();
     }
 
     [Test]

@@ -39,9 +39,11 @@ namespace EventManager.Datalayer
     /// <inheritdoc />
     public async Task<TModel> GetByIdAsync(Guid id)
     {
-      var result = await dbSet.FindAsync(id);
+      var entity = await dbSet.FindAsync(id);
 
-      return dboConverter.Convert<TModel>(result);
+      return entity != null
+        ? dboConverter.Convert<TModel>(entity)
+        : null;
     }
 
     /// <inheritdoc />
@@ -58,11 +60,6 @@ namespace EventManager.Datalayer
     /// <inheritdoc />
     public async Task AddAsync(TModel entity)
     {
-      if (entity == null)
-      {
-        throw new ArgumentNullException(nameof(entity));
-      }
-
       var result = dboConverter.Convert<TDbo>(entity);
       await dbSet.AddAsync(result);
       await context.SaveChangesAsync();
@@ -73,21 +70,16 @@ namespace EventManager.Datalayer
     /// <inheritdoc />
     public async Task UpdateAsync(TModel entity)
     {
-      if (entity == null)
-      {
-        throw new ArgumentNullException(nameof(entity));
-      }
-
       var existingEntity = await dbSet.FindAsync(entity.Id);
-      if (existingEntity == null)
-      {
-        throw new KeyNotFoundException($"Nie znaleziono obiektu o Id: {entity.Id}.");
-      }
 
       var updatedEntity = dboConverter.Convert<TDbo>(entity);
+      if (existingEntity != null)
+      {
+        context.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+        await context.SaveChangesAsync();
+      }
 
-      context.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
-      await context.SaveChangesAsync();
+      await Task.CompletedTask;
     }
 
     /// <inheritdoc />

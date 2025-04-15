@@ -25,26 +25,26 @@ namespace EventManager.Models
     /// <summary>
     /// Data rozpoczęcia.
     /// </summary>
-    public DateTime StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
     /// <summary>
     /// Data zakończenia
     /// </summary>
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     /// <summary>
     /// Identyfikator adresu.
     /// </summary>
-    public Guid AddressId { get; set; }
+    public Guid? AddressId { get; set; }
 
     /// <summary>
     /// Maksymalna ilość użytkowników.
     /// </summary>
-    public int MaxParticipants { get; set; }
+    public int? MaxParticipants { get; set; }
 
     /// <summary>
     /// Cena wstępu.
     /// </summary>
-    public decimal Cost { get; set; }
+    public decimal? Cost { get; set; }
   }
 }
