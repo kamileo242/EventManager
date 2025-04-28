@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EventManager.Models;
 
@@ -24,6 +25,13 @@ namespace EventManager.Domain
     Task<List<Address>> GetAllAsync();
 
     /// <summary>
+    /// Pobierz listę adresów na podstawie wskazanej właściwości.
+    /// </summary>
+    /// <param name="predicate">Wyrażenie warunkowe do filtrowania adresów.</param>
+    /// <returns>Lista adresów</returns>
+    Task<List<Address>> FindAsync(Expression<Func<Address, bool>> predicate);
+
+    /// <summary>
     /// Dodaj nowy adres.
     /// </summary>
     /// <param name="address">Adres</param>
@@ -33,7 +41,7 @@ namespace EventManager.Domain
     /// Zmień wybrane właściwości adresu.
     /// </summary>
     /// <param name="address">Dane adresu do modyfikacji</param>
-    Task UpdateAsync(Address address);
+    Task UpdateAsync(Guid id, Address address);
 
     /// <summary>
     /// Usuń adres.
