@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EventManager.Datalayer;
+using EventManager.Domain.Providers;
 using EventManager.Models;
 using EventManager.Models.Exceptions;
 
@@ -46,6 +47,8 @@ namespace EventManager.Domain.Services
     public async Task AddAsync(Address address)
     {
       await ValidateStoreAddress(address);
+
+      address.Id = GuidProvider.GenetareGuid();
 
       await repository.AddAsync(address);
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EventManager.Datalayer;
+using EventManager.Domain.Providers;
 using EventManager.Models;
 using EventManager.Models.Exceptions;
 
@@ -49,6 +50,8 @@ namespace EventManager.Domain.Services
     {
       await ValidateStoreEvent(@event);
       await ValidateAddress(@event.AddressId.GetValueOrDefault());
+
+      @event.Id = GuidProvider.GenetareGuid();
 
       await repository.AddAsync(@event);
     }

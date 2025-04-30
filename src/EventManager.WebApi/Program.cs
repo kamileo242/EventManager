@@ -3,6 +3,9 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using EventManager.Datalayer;
 using EventManager.Datalayer.Repositories;
+using EventManager.Domain;
+using EventManager.Domain.Services;
+using EventManager.WebApi.Converts;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -38,11 +41,18 @@ namespace EventManager.WebApi
       services.AddDbContext<EventManagerDbContext>(options =>
           options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-      services.AddSingleton<IDboConverter, DboConverter>();
+      services.AddScoped<IDboConverter, DboConverter>();
       services.AddScoped<IAddressRepository, AddressRepository>();
       services.AddScoped<IEventRepository, EventRepository>();
       services.AddScoped<IUserEventRepository, UserEventRepository>();
       services.AddScoped<IUserRepository, UserRepository>();
+
+      services.AddScoped<IAddressService, AddressService>();
+      services.AddScoped<IEventService, EventService>();
+      services.AddScoped<IUserEventService, UserEventService>();
+      services.AddScoped<IUserService, UserService>();
+
+      services.AddScoped<IDtoBuilder, DtoBuilder>();
 
       services.Configure<RequestLocalizationOptions>(options =>
       {

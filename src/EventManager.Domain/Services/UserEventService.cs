@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EventManager.Datalayer;
+using EventManager.Domain.Providers;
 using EventManager.Models;
 using EventManager.Models.Exceptions;
 
@@ -50,6 +51,8 @@ namespace EventManager.Domain.Services
     public async Task AddAsync(UserEvent userEvent)
     {
       await ValidateUserEvent(userEvent);
+
+      userEvent.JoinedAt = DateTimeProvider.GetTime();
 
       await userEventRepository.AddAsync(userEvent);
     }
