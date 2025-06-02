@@ -13,117 +13,121 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace EventManager.WebApi
 {
-  public class Program
-  {
-    public static void Main(string[] args)
+    public class Program
     {
-      var builder = WebApplication.CreateBuilder(args);
-
-      var configuration = builder.Configuration;
-
-      ConfigureServices(builder.Services, configuration, builder.Environment);
-
-      var app = builder.Build();
-
-      using (var scope = app.Services.CreateScope())
-      {
-        var dbContext = scope.ServiceProvider.GetRequiredService<EventManagerDbContext>();
-        dbContext.Database.Migrate();
-      }
-
-      ConfigureMiddleware(app, builder.Environment);
-
-      app.Run();
-    }
-
-    private static void ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
-    {
-      services.AddDbContext<EventManagerDbContext>(options =>
-          options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-      services.AddScoped<IDboConverter, DboConverter>();
-      services.AddScoped<IAddressRepository, AddressRepository>();
-      services.AddScoped<IEventRepository, EventRepository>();
-      services.AddScoped<IUserEventRepository, UserEventRepository>();
-      services.AddScoped<IUserRepository, UserRepository>();
-
-      services.AddScoped<IAddressService, AddressService>();
-      services.AddScoped<IEventService, EventService>();
-      services.AddScoped<IUserEventService, UserEventService>();
-      services.AddScoped<IUserService, UserService>();
-
-      services.AddScoped<IDtoBuilder, DtoBuilder>();
-
-      services.Configure<RequestLocalizationOptions>(options =>
-      {
-        options.DefaultRequestCulture = new RequestCulture("pl-PL");
-      });
-
-      services.AddControllers().AddJsonOptions(options =>
-      {
-        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-      });
-
-      services.AddEndpointsApiExplorer();
-
-      services.AddCors(options =>
-      {
-        options.AddPolicy("CustomPolicy", builder =>
+        public static void Main(string[] args)
         {
-          builder.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-        });
-      });
+            var builder = WebApplication.CreateBuilder(args);
 
-      services.AddSwaggerGen(options =>
-      {
-        options.SwaggerDoc("1.0", new OpenApiInfo
-        {
-          Title = "EventManager",
-          Description = "Aplikacja do zarz¹dzania wydarzeniami",
-          Version = "1.0"
-        });
+            var configuration = builder.Configuration;
 
-        if (env.IsDevelopment() || Debugger.IsAttached)
-        {
-          options.ExampleFilters();
+            ConfigureServices(builder.Services, configuration, builder.Environment);
+
+            var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<EventManagerDbContext>();
+                dbContext.Database.Migrate();
+            }
+
+            ConfigureMiddleware(app, builder.Environment);
+
+            app.Run();
         }
 
-        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-        options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
-        options.EnableAnnotations();
-        options.DescribeAllParametersInCamelCase();
-      });
-
-      services.AddSwaggerExamplesFromAssemblies(Assembly.GetExecutingAssembly());
-    }
-
-
-    private static void ConfigureMiddleware(WebApplication app, IWebHostEnvironment env)
-    {
-      app.UseCors("CustomPolicy");
-      app.UseRouting();
-
-      if (env.IsDevelopment() || Debugger.IsAttached)
-      {
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
+        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
-          options.SwaggerEndpoint("/swagger/1.0/swagger.json", "EventManager 1.0");
-          options.EnableFilter();
-          options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-          options.DisplayOperationId();
-        });
-      }
-      else
-      {
-        app.UseExceptionHandler("/error");
-      }
+            services.AddDbContext<EventManagerDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-      app.MapControllers();
+            services.AddScoped<IDboConverter, DboConverter>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IUserEventRepository, UserEventRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IUserEventService, UserEventService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IDtoBuilder, DtoBuilder>();
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("pl-PL");
+            });
+
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            });
+
+            services.AddEndpointsApiExplorer();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CustomPolicy", builder =>
+          {
+                  builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+              });
+            });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("1.0", new OpenApiInfo
+                {
+                    Title = "EventManager",
+                    Description = "Aplikacja do zarz¹dzania wydarzeniami",
+                    Version = "1.0"
+                });
+
+                if (env.IsDevelopment() || Debugger.IsAttached)
+                {
+                    options.ExampleFilters();
+                }
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+                options.EnableAnnotations();
+                options.DescribeAllParametersInCamelCase();
+                options.SupportNonNullableReferenceTypes();
+                options.UseAllOfToExtendReferenceSchemas();
+                options.MapType<Task>(() => new OpenApiSchema { Type = "object" });
+                options.MapType(typeof(Task<>), () => new OpenApiSchema { Type = "object" });
+            });
+
+            services.AddSwaggerExamplesFromAssemblies(Assembly.GetExecutingAssembly());
+        }
+
+
+        private static void ConfigureMiddleware(WebApplication app, IWebHostEnvironment env)
+        {
+            app.UseCors("CustomPolicy");
+            app.UseRouting();
+
+            if (env.IsDevelopment() || Debugger.IsAttached)
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/1.0/swagger.json", "EventManager 1.0");
+                    options.EnableFilter();
+                    options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+                    options.DisplayOperationId();
+                });
+            }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
+
+            app.MapControllers();
+        }
     }
-  }
 }
